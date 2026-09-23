@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TelePulse — Demo Day Prezentatsiya Sayti</title>
+  <meta name="description" content="TelePulse — Zamonaviy real-time muloqot platformasi. Demo Day uchun maxsus futuristik prezentatsiya sayti.">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- GSAP 3 & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+</head>
+<body>
+
+  <!-- Custom Futuristic Cursor -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-follower" id="cursor-follower">
+    <span class="cursor-badge" id="cursor-badge">EXPLORE</span>
+  </div>
+
+  <!-- Background Particle Canvas & Ambient Orbs -->
+  <canvas id="particle-canvas"></canvas>
+  <div class="ambient-orb orb-1"></div>
+  <div class="ambient-orb orb-2"></div>
+  <div class="ambient-orb orb-3"></div>
+  <div class="cyber-grid"></div>
+
+  <!-- Glass Navbar -->
+  <nav class="navbar" id="navbar">
+    <a href="#hero" class="nav-brand" data-cursor="TELEPULSE">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="logo-text">TELE<span>PULSE</span></span>
+    </a>
+
+    <ul class="nav-menu">
+      <li><a href="#hero" class="nav-link active">Bosh sahifa</a></li>
+      <li><a href="#problem" class="nav-link">Muammo</a></li>
+      <li><a href="#solution" class="nav-link">Yechim</a></li>
+      <li><a href="#features" class="nav-link">Imkoniyatlar</a></li>
+      <li><a href="#timeline" class="nav-link">Jarayon</a></li>
+      <li><a href="#live-demo" class="nav-link">Demo</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="btn-presentation-mode" id="toggle-pres-mode" data-cursor="SLIDES">
+        <span>PRESENTATSIYA REJIMI</span> 📺
+      </button>
+      <a href="https://telepulce.netlify.app/" target="_blank" rel="noopener" class="btn-primary nav-cta" data-cursor="GO LIVE">
+        LIVE DEMO →
+      </a>
+    </div>
+  </nav>
+
+  <!-- Presentation Control Bar (Visible in Presentation Mode) -->
+  <div class="presentation-bar" id="presentation-bar">
+    <div class="pres-info" id="pres-slide-counter">SLAYD 01 / 08</div>
+    <div class="pres-timer-tag" id="pres-time-guide">00:00–00:30 | Kirish + TelePulse</div>
+    <div class="pres-nav-btns">
+      <button class="pres-btn" id="pres-prev" title="Oldingi slayd (Up Arrow)">↑</button>
+      <button class="pres-btn" id="pres-next" title="Keyingi slayd (Down Arrow)">↓</button>
+      <button class="pres-btn" id="pres-exit" title="Chiqish">✕</button>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- SECTION 1: HERO (00:00 – 00:30) -->
+    <section id="hero" class="hero-section slide-section" data-slide="1" data-time="00:00–00:30 | Kirish + TelePulse">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="badge-tag">
+            <span class="badge-pulse-dot"></span>
+            NEXT-GEN CHAT PLATFORM
+          </div>
+
+          <h1 class="hero-title">
+            TELE<span class="glow-word">PULSE</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            Zamonaviy muloqot. Bitta platformada.
+          </p>
+
+          <p class="hero-description">
+            Real-time muloqot, guruhlar va qulay kommunikatsiya — barchasi bir joyda. Tezkor, xavfsiz va kelajak dizaynida.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="https://telepulce.netlify.app/" target="_blank" rel="noopener" class="btn-primary" data-cursor="LAUNCH">
+              🚀 LIVE DEMO
+            </a>
+            <a href="#problem" class="btn-secondary" data-cursor="EXPLORE">
+              LOYIHA HAQIDA ↓
+            </a>
+          </div>
+        </div>
+
+        <!-- 3D TelePulse Interactive Mockup -->
+        <div class="mockup-wrapper">
+          <div class="telepulse-3d-mockup" id="hero-mockup">
+            <div class="mockup-header">
+              <div class="window-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <div class="mockup-title-bar">
+                <span class="live-indicator"></span>
+                telepulse.app • Live Demo
+              </div>
+            </div>
+
+            <div class="mockup-body">
+              <!-- Sidebar -->
+              <div class="mockup-sidebar">
+                <input type="text" class="mockup-search-input" value="🔍 Qidirish..." readonly />
+                
+                <div class="chat-item active">
+                  <div class="avatar-wrapper">
+                    <div class="avatar-img">TP</div>
+                    <div class="online-status"></div>
+                  </div>
+                  <div class="chat-meta">
+                    <div class="chat-name">TelePulse Community</div>
+                    <div class="chat-preview">Ali: Yangi chat tizimi ishga tushdi! 🔥</div>
+                  </div>
+                </div>
+
+                <div class="chat-item">
+                  <div class="avatar-wrapper">
+                    <div class="avatar-img" style="background: linear-gradient(135deg, #10b981, #3b82f6);">AZ</div>
+                    <div class="online-status"></div>
+                  </div>
+                  <div class="chat-meta">
+                    <div class="chat-name">Aziz Rahimov</div>
+                    <div class="chat-preview">Demo Day tayyormi?</div>
+                  </div>
+                </div>
+
+                <div class="chat-item">
+                  <div class="avatar-wrapper">
+                    <div class="avatar-img" style="background: linear-gradient(135deg, #ff007f, #8a2be2);">MD</div>
+                  </div>
+                  <div class="chat-meta">
+                    <div class="chat-name">Frontend Devs</div>
+                    <div class="chat-preview">Malika: GSAP animatsiyalar qoshildi</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Chat Window -->
+              <div class="mockup-main-chat">
+                <div class="chat-header-info">
+                  <div>
+                    <div class="header-user-title">TelePulse Community</div>
+                    <div class="header-user-status">1,420 a'zo • 384 online</div>
+                  </div>
+                </div>
+
+                <div class="messages-list">
+                  <div class="msg-bubble msg-incoming">
+                    Assalomu alaykum! TelePulse platformasiga xush kelibsiz! 👋
+                    <div class="msg-time">14:02</div>
+                  </div>
+
+                  <div class="msg-bubble msg-outgoing">
+                    Vaalaykum assalom! Real-time va zamonaviy UI bilan tezkor muloqot! 🔥
+                    <div class="msg-time">14:03</div>
+                  </div>
+
+                  <div class="typing-indicator-box">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                  </div>
+                </div>
+
+                <div class="chat-input-bar">
+                  <div class="chat-input-mock">Xabaringizni yozing...</div>
+                  <button class="chat-send-btn">➤</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating Badges -->
+          <div class="mockup-floating-badge badge-top-right">
+            <span style="color: var(--primary-cyan); font-weight: 800;">⚡ 12ms</span> Latency
+          </div>
+
+          <div class="mockup-floating-badge badge-bottom-left">
+            <span style="color: var(--emerald-green); font-weight: 800;">🔒 End-to-End</span> Encrypted
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: MUAMMO (00:30 – 01:10) -->
+    <section id="problem" class="problem-section slide-section" data-slide="2" data-time="00:30–01:10 | Muammo">
+      <div class="container">
+        <div class="badge-tag">
+          <span class="badge-pulse-dot" style="background: var(--accent-pink); box-shadow: 0 0 8px var(--accent-pink);"></span>
+          MUAMMO
+        </div>
+
+        <h2 class="section-title">
+          Bugungi muloqot nega murakkab?
+        </h2>
+        <p class="section-subtitle">
+          Foydalanuvchilar har kuni onlayn muloqotda duch keladigan 3 ta eng katta to'siq:
+        </p>
+
+        <div class="problem-grid">
+          <div class="problem-card-giant gsap-reveal">
+            <div class="problem-number">01</div>
+            <div>
+              <h3 class="problem-title">KO‘P PLATFORMALAR</h3>
+              <p class="problem-desc">Xabarlar 5 xil ilovada tarqoq. Har bir guruh va loyiha uchun alohida platforma ishlatish noqulaylik tug'diradi.</p>
+            </div>
+          </div>
+
+          <div class="problem-card-giant gsap-reveal">
+            <div class="problem-number">02</div>
+            <div>
+              <h3 class="problem-title">ALOQALAR TARQOQ</h3>
+              <p class="problem-desc">Fayllar, medialar va muhim xabarlarni izlab topish juda ko'p vaqt va energiya yo'qotilishiga olib keladi.</p>
+            </div>
+          </div>
+
+          <div class="problem-card-giant gsap-reveal">
+            <div class="problem-number">03</div>
+            <div>
+              <h3 class="problem-title">ESKIRGAN INTERFEYSLAR</h3>
+              <p class="problem-desc">Sekin ishlaydigan, og'ir va zamonaviy texnologiyalarga mos kelmaydigan zerikarli chat interfeyslari.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: YECHIM (01:10 – 02:00) -->
+    <section id="solution" class="solution-section slide-section" data-slide="3" data-time="01:10–02:00 | Yechim">
+      <div class="container">
+        <div class="badge-tag">YECHIM HASIL BO'LDI</div>
+        <h2 class="section-title">TelePulse bilan tanishing.</h2>
+        <p class="section-subtitle" style="margin: 0 auto 3rem auto;">
+          Barcha muloqot ehtiyojlarini bitta mukammal, chaqmoqdek tez va chiroyli platformada birlashtirdik.
+        </p>
+
+        <div class="solution-showcase-container" id="solution-container">
+          <!-- Floating Feature Tags Connected by Energy Lines -->
+          <div class="node-tag node-top-left">⚡ REAL-TIME</div>
+          <div class="node-tag node-top-right">✨ ODDIY</div>
+          <div class="node-tag node-bottom-left">🚀 TEZKOR</div>
+          <div class="node-tag node-bottom-right">🌐 BIR JOYDA</div>
+
+          <!-- Connecting Lines SVG overlay -->
+          <svg id="connection-svg">
+            <line x1="15%" y1="15%" x2="50%" y2="50%" class="svg-glow-line" />
+            <line x1="85%" y1="15%" x2="50%" y2="50%" class="svg-glow-line" />
+            <line x1="15%" y1="85%" x2="50%" y2="50%" class="svg-glow-line" />
+            <line x1="85%" y1="85%" x2="50%" y2="50%" class="svg-glow-line" />
+          </svg>
+
+          <!-- Core App Visual -->
+          <div class="telepulse-3d-mockup solution-core-mockup" id="solution-mockup">
+            <div class="mockup-header">
+              <div class="window-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <div class="mockup-title-bar">TelePulse Core Engine v1.0</div>
+            </div>
+            <div style="padding: 3rem 2rem; text-align: center;">
+              <h3 style="font-family: var(--font-heading); font-size: 2.2rem; color: #fff; margin-bottom: 0.5rem;">
+                TELE<span style="color: var(--primary-cyan);">PULSE</span> ECOSYSTEM
+              </h3>
+              <p style="color: var(--text-muted); font-size: 1rem;">
+                Real-time WebSocket & Ultra-fast Client Engine
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: ASOSIY IMKONIYATLAR (02:00 – 03:20) -->
+    <section id="features" class="features-section slide-section" data-slide="4" data-time="02:00–03:20 | Asosiy Imkoniyatlar">
+      <div class="container">
+        <div class="badge-tag">INTERAKTIV IMKONIYATLAR</div>
+        <h2 class="section-title">Mukammal Imkoniyatlar</h2>
+        <p class="section-subtitle">Har bir detal muloqotingizni oson va maroqli qilish uchun puxta o'ylangan.</p>
+
+        <div class="features-interactive-grid">
+          <!-- Feature Selection Menu -->
+          <div class="features-nav-list">
+            <button class="feature-nav-btn active" data-feature="1" data-cursor="VIEW">
+              <span class="feature-num">01</span>
+              <span class="feature-title-text">REAL-TIME CHAT</span>
+            </button>
+            
+            <button class="feature-nav-btn" data-feature="2" data-cursor="VIEW">
+              <span class="feature-num">02</span>
+              <span class="feature-title-text">GURUHLAR</span>
+            </button>
+
+            <button class="feature-nav-btn" data-feature="3" data-cursor="VIEW">
+              <span class="feature-num">03</span>
+              <span class="feature-title-text">SMART QIDIRUV</span>
+            </button>
+
+            <button class="feature-nav-btn" data-feature="4" data-cursor="VIEW">
+              <span class="feature-num">04</span>
+              <span class="feature-title-text">MEDIA YUBORISH</span>
+            </button>
+
+            <button class="feature-nav-btn" data-feature="5" data-cursor="VIEW">
+              <span class="feature-num">05</span>
+              <span class="feature-title-text">XABARLARNI BOSHQARISH</span>
+            </button>
+
+            <button class="feature-nav-btn" data-feature="6" data-cursor="VIEW">
+              <span class="feature-num">06</span>
+              <span class="feature-title-text">PROFIL VA SOZLAMALAR</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Feature Screen Display -->
+          <div class="feature-preview-display">
+            <div class="dynamic-feature-mockup" id="feature-screen-box">
+              
+              <!-- Screen 1: Real-time Chat -->
+              <div class="feature-screen-content active" id="screen-1">
+                <div class="badge-tag">01 / REAL-TIME CHAT</div>
+                <h3 style="font-size: 1.8rem; color: #fff; margin-bottom: 1rem;">O'ta tezkor xabar almashish</h3>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">Hech qanday kechikishsiz instant chatlar, yozilayotganlik indikatorlari va darhol yetkazish statistikasi.</p>
+                <div class="feature-chat-demo">
+                  <div class="demo-bubble msg-incoming">Bugun platforma sinovdan o'tdi! ⚡</div>
+                  <div class="demo-bubble msg-outgoing">Super! Tezlik va interfeys darajasi juda yuqori! 🔥</div>
+                </div>
+              </div>
+
+              <!-- Screen 2: Groups -->
+              <div class="feature-screen-content" id="screen-2">
+                <div class="badge-tag">02 / GURUHLAR</div>
+                <h3 style="font-size: 1.8rem; color: #fff; margin-bottom: 1rem;">Jamoaviy guruh muloqotlari</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Minglab a'zolar bilan bitta joyda muloqot qiling, rollarni taqsimlang va xabarlarni tartiblang.</p>
+                <div class="groups-grid-demo">
+                  <div class="group-card-demo">
+                    <div style="font-weight: 700; color: #fff;">🚀 Frontend Team</div>
+                    <div style="font-size: 0.8rem; color: var(--text-dim);">48 a'zo • Active</div>
+                  </div>
+                  <div class="group-card-demo">
+                    <div style="font-weight: 700; color: #fff;">🎨 UI/UX Designers</div>
+                    <div style="font-size: 0.8rem; color: var(--text-dim);">12 a'zo • Active</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Screen 3: Smart Search -->
+              <div class="feature-screen-content" id="screen-3">
+                <div class="badge-tag">03 / SMART QIDIRUV</div>
+                <h3 style="font-size: 1.8rem; color: #fff; margin-bottom: 1rem;">Zudlik bilan qidirish</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Chatlar, foydalanuvchilar va xabarlarni soniyalar ichida filteringiz bo'yicha toping.</p>
+                <div class="search-demo-bar">
+                  <span>🔍</span>
+                  <span style="color: var(--primary-cyan); font-family: var(--font-mono);">"Demo Day Prezentatsiya"</span>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">✓ 3 ta mos kelgan natija topildi</div>
+              </div>
+
+              <!-- Screen 4: Media Sharing -->
+              <div class="feature-screen-content" id="screen-4">
+                <div class="badge-tag">04 / MEDIA YUBORISH</div>
+                <h3 style="font-size: 1.8rem; color: #fff; margin-bottom: 1rem;">Fayllar va Media galereyasi</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Rasmlar, hujjatlar va media fayllarni asl sifatini saqlagan holda lahzalarda uzating.</p>
+                <div style="display: flex; gap: 1rem;">
+                  <div style="width: 80px; height: 80px; background: rgba(0,240,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary-cyan); font-weight: 700;">IMG</div>
+                  <div style="width: 80px; height: 80px; background: rgba(138,43,226,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary-purple); font-weight: 700;">DOC</div>
+                  <div style="width: 80px; height: 80px; background: rgba(16,185,129,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--emerald-green); font-weight: 700;">ZIP</div>
+                </div>
+              </div>
+
+              <!-- Screen 5: Message Control -->
+              <div class="feature-screen-content" id="screen-5">
+                <div class="badge-tag">05 / XABARLARNI BOSHQARISH</div>
+                <h3 style="font-size: 1.8rem; color: #fff; margin-bottom: 1rem;">Tahrirlash va O'chirish</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Xatolarni to'g'rilang, xabarni tahrirlang yoki istalgan vaqtda qayta o'chirib tashlang.</p>
+                <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px; border-left: 3px solid var(--primary-cyan);">
+                  <span style="font-size: 0.8rem; color: var(--primary-cyan);">✏️ Edit qilingan xabar</span>
+                  <div style="color: #fff; margin-top: 0.3rem;">TelePulse yangi versiyasi tayyor! (tahrirlandi)</div>
+                </div>
+              </div>
+
+              <!-- Screen 6: Profile -->
+              <div class="feature-screen-content" id="screen-6">
+                <div class="badge-tag">06 / PROFIL VA SOZLAMALAR</div>
+                <h3 style="font-size: 1.8rem; color: #fff; margin-bottom: 1rem;">Shaxsiy Profilingiz</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Status, bio, profil rasmi va xavfsizlik sozlamalarini o'zingizga moslang.</p>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                  <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-main);"></div>
+                  <div>
+                    <div style="color: #fff; font-weight: 700;">Foydalanuvchi Profili</div>
+                    <div style="color: var(--emerald-green); font-size: 0.85rem;">Online • Custom Status</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: ODAMLAR UCHUN YARATILGAN (DESKTOP & MOBILE DUAL SHOWCASE) -->
+    <section class="multi-device-section slide-section" data-slide="5" data-time="02:00–03:20 | Barcha qurilmalarda">
+      <div class="container">
+        <div class="badge-tag">CROSS-PLATFORM</div>
+        <h2 class="section-title">Hamma uchun oddiy.<br>Har narsa uchun kuchli.</h2>
+        <p class="section-subtitle" style="margin: 0 auto;">Desktop va mobil ekranlarda bir xil darajadagi uzluksiz tajriba.</p>
+
+        <div class="device-orbit-container">
+          <div class="orbit-ring"></div>
+          
+          <!-- Desktop Glass Mockup -->
+          <div class="desktop-frame">
+            <div class="mockup-header">
+              <div class="window-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">TelePulse Web Desktop</div>
+            </div>
+            <div style="padding: 4rem 2rem; color: var(--text-muted); text-align: center;">
+              <h3 style="color: #fff; font-size: 1.8rem; margin-bottom: 0.5rem;">DESKTOP EXPERIENCE</h3>
+              Full screen workspace layout
+            </div>
+          </div>
+
+          <!-- Mobile Phone Glass Mockup -->
+          <div class="phone-frame">
+            <div style="height: 25px; background: #000; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; width: 50%; margin: 0 auto;"></div>
+            <div style="padding: 2rem 1rem; text-align: center;">
+              <div style="font-size: 1.2rem; font-weight: 800; color: #fff; margin-top: 1rem;">TELEPULSE</div>
+              <div style="font-size: 0.75rem; color: var(--primary-cyan); margin-top: 0.3rem;">Mobile App View</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: QANDAY ISHLAYDI? (TIMELINE) -->
+    <section id="timeline" class="timeline-section slide-section" data-slide="6" data-time="02:00–03:20 | Ishlash Jarayoni">
+      <div class="container">
+        <div style="text-align: center;">
+          <div class="badge-tag">OSON BOSHQICH</div>
+          <h2 class="section-title">Qanday ishlaydi?</h2>
+          <p class="section-subtitle" style="margin: 0 auto;">3 ta oddiy qadam bilan muloqotni boshlang.</p>
+        </div>
+
+        <div class="timeline-steps-grid">
+          <div class="timeline-line-bg"></div>
+          <div class="timeline-line-progress" id="timeline-progress"></div>
+
+          <div class="timeline-step-card active" data-step="1">
+            <div class="step-circle-badge">01</div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: #fff; margin-bottom: 0.75rem;">YARATING</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Bir necha sekundda akkaunt oching va shaxsiy profilingizni sozlang.</p>
+          </div>
+
+          <div class="timeline-step-card" data-step="2">
+            <div class="step-circle-badge">02</div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: #fff; margin-bottom: 0.75rem;">ULANING</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Do'stlaringizni taklif qiling, guruhlar yarating va chatlarga qo'shiling.</p>
+          </div>
+
+          <div class="timeline-step-card" data-step="3">
+            <div class="step-circle-badge">03</div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.5rem; color: #fff; margin-bottom: 0.75rem;">MULOQOT QILING</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Cheklovlarsiz, tezkor va zavqli muloqotdan bahramand bo'ling!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: TEXNOLOGIYALAR & MENING ISHIM (04:20 – 05:00) -->
+    <section class="slide-section" data-slide="7" data-time="04:20–05:00 | Texnologiyalar & Mening ishim">
+      <div class="container">
+        <!-- Tech Stack -->
+        <div style="text-align: center; margin-bottom: 6rem;">
+          <div class="badge-tag">ISHLATILGAN STACK</div>
+          <h2 class="section-title">Texnologiyalar</h2>
+          <p class="section-subtitle" style="margin: 0 auto 2rem auto;">Loyiha qurilishida haqiqatda ishlatilgan asosiy texnologiyalar:</p>
+          
+          <div class="tech-grid">
+            <div class="tech-pill"><span>🌐</span> HTML5</div>
+            <div class="tech-pill"><span>🎨</span> CSS3 / GLASSMORPHISM</div>
+            <div class="tech-pill"><span>⚡</span> JAVASCRIPT (ES6+)</div>
+            <div class="tech-pill"><span>📱</span> RESPONSIVE DESIGN</div>
+            <div class="tech-pill"><span>💬</span> REAL-TIME COMMUNICATION</div>
+          </div>
+        </div>
+
+        <!-- My Work / Role -->
+        <div style="text-align: center;">
+          <div class="badge-tag" style="border-color: var(--primary-purple); color: var(--primary-purple);">DEVELOPMENT & DESIGN</div>
+          <h2 class="section-title">TelePulse ortida mening ishim</h2>
+          
+          <div class="maker-grid">
+            <div class="maker-card">UI / UX Design</div>
+            <div class="maker-card">Frontend Architecture</div>
+            <div class="maker-card">Responsive Design</div>
+            <div class="maker-card">Interaktivlik & GSAP</div>
+            <div class="maker-card">Loyiha ishlab chiqish</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8: LIVE DEMO (03:20 – 04:20) -->
+    <section id="live-demo" class="live-demo-section slide-section" data-slide="8" data-time="03:20–04:20 | Live Demo">
+      <div class="container">
+        <div class="badge-tag">BOSHLASHGA TAYYORMISIZ?</div>
+        <h2 class="section-title" style="font-size: clamp(3rem, 7vw, 5.5rem);">
+          TelePulse’ni sinab ko‘ring.
+        </h2>
+        <p class="section-subtitle" style="margin: 0 auto;">
+          Jonli platformani hoziroq brauzeringizda ishlatib ko'ring.
+        </p>
+
+        <a href="https://telepulce.netlify.app/" target="_blank" rel="noopener" class="btn-primary giant-cta-btn" data-cursor="OPEN APP">
+          🚀 LIVE DEMO CHTA
+        </a>
+      </div>
+    </section>
+
+    <!-- OUTRO SECTION -->
+    <section class="outro-section">
+      <div class="container" style="text-align: center;">
+        <h2 class="outro-title">
+          ZAMONAVIY MULOQOT<br>SHU YERDAN BOSHLANADI.
+        </h2>
+        
+        <div style="font-family: var(--font-heading); font-size: 2rem; font-weight: 900; color: #fff; margin-bottom: 0.5rem;">
+          TELE<span style="color: var(--primary-cyan);">PULSE</span>
+        </div>
+        
+        <p style="color: var(--text-muted); font-size: 1.2rem;">
+          E’tiboringiz uchun rahmat! 🔥
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JavaScript App Logic -->
+  <script src="main.js"></script>
+</body>
+</html>
