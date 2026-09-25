@@ -1,10 +1,10 @@
 /* ==========================================================================
-   TELEPULSE DEMO DAY PRESENTATION — FUTURISTIC INTERACTIVE LOGIC
+   TELEPULSE DEMO DAY PRESENTATION — HIGH-PERFORMANCE INTERACTIVE LOGIC
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
   
-  // Register GSAP Plugins
+  // Register GSAP Plugins if loaded
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger);
   }
@@ -25,12 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     mouseX = e.clientX;
     mouseY = e.clientY;
     
-    // Position dot instantly
     if (cursorDot) {
       cursorDot.style.left = `${mouseX}px`;
       cursorDot.style.top = `${mouseY}px`;
     }
-  });
+  }, { passive: true });
 
   function renderCursor() {
     followerX += (mouseX - followerX) * 0.18;
@@ -45,12 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   renderCursor();
 
-  // Attach hover events to interactive elements
-  const interactiveElements = document.querySelectorAll('[data-cursor], a, button, .glass-card, .chat-item');
+  // Attach dynamic cursor badges on interactive elements
+  const interactiveElements = document.querySelectorAll('[data-cursor], a, button, .chat-item, .tech-pill, .maker-card, .feature-nav-btn');
   interactiveElements.forEach(el => {
     el.addEventListener('mouseenter', () => {
       document.body.classList.add('cursor-hover');
-      const badgeText = el.getAttribute('data-cursor') || 'OPEN';
+      const badgeText = el.getAttribute('data-cursor') || 'KO‘RISH';
       if (cursorBadge) cursorBadge.textContent = badgeText;
     });
 
@@ -60,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* --------------------------------------------------------------------------
-     2. CANVAS AMBIENT NEON PARTICLES & STARDUST
+     2. AMBIENT NEON PARTICLES & STARDUST CANVAS
      -------------------------------------------------------------------------- */
   const canvas = document.getElementById('particle-canvas');
   if (canvas) {
@@ -71,20 +70,20 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-    });
+    }, { passive: true });
 
     const particles = [];
-    const particleCount = Math.min(Math.floor(window.innerWidth / 20), 60);
+    const particleCount = Math.min(Math.floor(window.innerWidth / 22), 50);
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
         radius: Math.random() * 2 + 1,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        alpha: Math.random() * 0.5 + 0.2,
-        color: Math.random() > 0.5 ? '#00f0ff' : '#8a2be2'
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.35,
+        alpha: Math.random() * 0.4 + 0.2,
+        color: Math.random() > 0.4 ? '#ff2a4b' : '#ffffff'
       });
     }
 
@@ -100,25 +99,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        // Draw particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.alpha;
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 8;
         ctx.shadowColor = p.color;
         ctx.fill();
 
-        // Connect nearby particles with glowing lines
         for (let j = idx + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-          if (dist < 120) {
+          if (dist < 110) {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.strokeStyle = p.color;
-            ctx.globalAlpha = (1 - dist / 120) * 0.15;
+            ctx.globalAlpha = (1 - dist / 110) * 0.12;
             ctx.lineWidth = 0.8;
             ctx.stroke();
           }
@@ -131,25 +128,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* --------------------------------------------------------------------------
-     3. NAVBAR SCROLL EFFECT & SMOOTH NAV LINKS
+     3. NAVBAR SCROLL GLASS EFFECT & ACTIVE NAVIGATION LINK SYNC
      -------------------------------------------------------------------------- */
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
+    if (window.scrollY > 40) {
       navbar.classList.add('scrolled');
     } else {
       navbar.classList.remove('scrolled');
     }
-  });
+  }, { passive: true });
 
-  // Active state link highlight on scroll
   const sections = document.querySelectorAll('section');
   const navLinks = document.querySelectorAll('.nav-link');
 
   window.addEventListener('scroll', () => {
     let current = '';
     sections.forEach(section => {
-      const sectionTop = section.offsetTop - 150;
+      const sectionTop = section.offsetTop - 180;
       if (window.scrollY >= sectionTop) {
         current = section.getAttribute('id');
       }
@@ -161,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.classList.add('active');
       }
     });
-  });
+  }, { passive: true });
 
   /* --------------------------------------------------------------------------
      4. 3D MOUSE PARALLAX TILT EFFECT FOR HERO MOCKUP
@@ -173,11 +169,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const mockupX = rect.left + rect.width / 2;
       const mockupY = rect.top + rect.height / 2;
 
-      const angleX = (e.clientY - mockupY) / 25;
-      const angleY = (mockupX - e.clientX) / 25;
+      const angleX = (e.clientY - mockupY) / 30;
+      const angleY = (mockupX - e.clientX) / 30;
 
-      heroMockup.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.02)`;
-    });
+      heroMockup.style.transform = `rotateX(${angleX}deg) rotateY(${angleY}deg) scale(1.01)`;
+    }, { passive: true });
   }
 
   /* --------------------------------------------------------------------------
@@ -190,14 +186,13 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => {
       const featureId = btn.getAttribute('data-feature');
 
-      // Toggle Active Button
       featureBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      // Toggle Screen Display
       featureScreens.forEach(screen => {
         screen.classList.remove('active');
       });
+
       const activeScreen = document.getElementById(`screen-${featureId}`);
       if (activeScreen) {
         activeScreen.classList.add('active');
@@ -209,16 +204,16 @@ document.addEventListener('DOMContentLoaded', () => {
      6. GSAP ANIMATIONS & ENTRANCE REVEALS
      -------------------------------------------------------------------------- */
   if (typeof gsap !== 'undefined') {
-    // Hero Entrance Timeline
+    // Hero Entrance
     const heroTl = gsap.timeline();
     heroTl
-      .from('.hero-title', { opacity: 0, y: 40, duration: 1, ease: 'power3.out' })
-      .from('.hero-subtitle', { opacity: 0, y: 20, duration: 0.8, ease: 'power3.out' }, '-=0.6')
-      .from('.hero-description', { opacity: 0, y: 20, duration: 0.8, ease: 'power3.out' }, '-=0.6')
-      .from('.hero-cta-group', { opacity: 0, scale: 0.9, duration: 0.8, ease: 'power3.out' }, '-=0.5')
-      .from('#hero-mockup', { opacity: 0, x: 60, rotateY: -20, duration: 1.2, ease: 'power4.out' }, '-=1');
+      .from('.hero-title', { opacity: 0, y: 35, duration: 0.9, ease: 'power3.out' })
+      .from('.hero-subtitle', { opacity: 0, y: 20, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+      .from('.hero-description', { opacity: 0, y: 20, duration: 0.7, ease: 'power3.out' }, '-=0.5')
+      .from('.hero-cta-group', { opacity: 0, scale: 0.95, duration: 0.7, ease: 'power3.out' }, '-=0.4')
+      .from('#hero-mockup', { opacity: 0, x: 50, rotateY: -15, duration: 1, ease: 'power4.out' }, '-=0.8');
 
-    // ScrollTrigger Reveals for Problem Section
+    // ScrollTrigger Reveals
     gsap.utils.toArray('.gsap-reveal').forEach(el => {
       gsap.from(el, {
         scrollTrigger: {
@@ -226,14 +221,14 @@ document.addEventListener('DOMContentLoaded', () => {
           start: 'top 85%',
         },
         opacity: 0,
-        y: 40,
-        filter: 'blur(10px)',
-        duration: 0.9,
+        y: 35,
+        filter: 'blur(8px)',
+        duration: 0.85,
         ease: 'power3.out'
       });
     });
 
-    // Timeline Progress Bar Sync
+    // Timeline Line Progress Fill
     ScrollTrigger.create({
       trigger: '#timeline',
       start: 'top 70%',
@@ -268,10 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const targetSection = slideSections[currentSlideIndex];
 
-    // Scroll smooth to section
     targetSection.scrollIntoView({ behavior: 'smooth' });
 
-    // Active state highlighting in presentation mode
     slideSections.forEach((sec, idx) => {
       if (idx === currentSlideIndex) {
         sec.classList.add('slide-active');
@@ -280,12 +273,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Update Counter & Guide Text
     const slideNum = targetSection.getAttribute('data-slide') || (currentSlideIndex + 1);
-    const timeGuide = targetSection.getAttribute('data-time') || 'Demo Day Presentation';
+    const timeGuide = targetSection.getAttribute('data-time') || 'Demo Day Prezentatsiya';
 
     if (presCounter) presCounter.textContent = `SLAYD 0${slideNum} / 0${slideSections.length}`;
-    if (presTimeGuide) presTimeGuide.textContent = timeGuide;
+    if (presTimeGuide) presTimeGuide.textContent = `⏱️ ${timeGuide}`;
   }
 
   function togglePresentationMode(enable) {
@@ -313,9 +305,8 @@ document.addEventListener('DOMContentLoaded', () => {
     presPrevBtn.addEventListener('click', () => updateSlideView(currentSlideIndex - 1));
   }
 
-  // Keyboard navigation for presentation mode
+  // Keyboard shortcut controls
   window.addEventListener('keydown', (e) => {
-    // Press 'P' key to toggle presentation mode quickly
     if (e.key === 'p' || e.key === 'P') {
       togglePresentationMode();
       return;
