@@ -1,696 +1,592 @@
 <!DOCTYPE html>
-<html lang="uz" data-theme="dark">
+<html lang="uz">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#17212b">
-  <meta name="description" content="TelePulce — Telegram-uslubidagi zamonaviy, tezkor va professional Web Messenger platformasi.">
-  <title>TelePulce Web Messenger</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TelePulse — Prezentatsiya Sayti</title>
+  <meta name="description" content="TelePulse — Odamlarning bir-biri bilan qulayroq muloqot qilishi uchun yaratilgan platforma.">
   
-  <!-- TelePulce Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232481cc'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
-
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome 6 Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- TelePulce Modern Stylesheet -->
+  <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="styles.css">
+  
+  <!-- GSAP 3 & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body>
 
-  <!-- APP CONTAINER -->
-  <div class="app-container" id="app-container">
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-follower" id="cursor-follower">
+    <span class="cursor-badge" id="cursor-badge">KIRISH</span>
+  </div>
 
-    <!-- ─── 1. CHATS SIDEBAR ─────────────────────────────────────────── -->
-    <aside class="sidebar" id="sidebar">
-      
-      <!-- Sidebar Header -->
-      <div class="sidebar-header">
-        <button class="menu-btn" id="btn-hamburger" title="Menyu">
-          <i class="fa-solid fa-bars"></i>
-        </button>
+  <!-- Background Canvas & Ambient Orbs -->
+  <canvas id="particle-canvas"></canvas>
+  <div class="ambient-orb orb-red"></div>
+  <div class="ambient-orb orb-dark"></div>
+  <div class="cyber-grid"></div>
 
-        <div class="search-wrapper">
-          <i class="fa-solid fa-magnifying-glass search-icon-left"></i>
-          <input type="text" id="global-search-input" class="search-input" placeholder="Qidiruv (kontakt, guruh, xabar)..." autocomplete="off">
-          <button class="search-clear-btn" id="btn-clear-search" title="Tozalash">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
+  <!-- Glass Navbar -->
+  <nav class="navbar" id="navbar">
+    <a href="#hero" class="nav-brand" data-cursor="TELEPULSE">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </div>
+      <span class="logo-text">TELE<span class="text-accent-red">PULSE</span></span>
+    </a>
 
-      <!-- Filter Tabs -->
-      <div class="chat-tabs" id="chat-tabs">
-        <button class="chat-tab active" data-tab="all">Barchasi</button>
-        <button class="chat-tab" data-tab="private">Shaxsiy</button>
-        <button class="chat-tab" data-tab="groups">Guruhlar</button>
-        <button class="chat-tab" data-tab="channels">Kanallar</button>
-        <button class="chat-tab" data-tab="saved">Saqlangan</button>
-      </div>
+    <ul class="nav-menu">
+      <li><a href="#hero" class="nav-link active">Bosh sahifa</a></li>
+      <li><a href="#problem" class="nav-link">Muammo</a></li>
+      <li><a href="#solution" class="nav-link">Yechim</a></li>
+      <li><a href="#features" class="nav-link">Imkoniyatlar</a></li>
+      <li><a href="#live-demo" class="nav-link">Demo</a></li>
+    </ul>
 
-      <!-- Chat List Container -->
-      <div class="chat-list" id="chat-list-container">
-        <!-- Chats dynamically rendered here -->
-      </div>
-
-      <!-- Floating Action Button (New Chat) -->
-      <button class="fab-btn" id="fab-new-chat" title="Yangi suhbat boshlash">
-        <i class="fa-solid fa-pen"></i>
+    <div class="nav-actions">
+      <button class="btn-presentation-mode" id="toggle-pres-mode" data-cursor="SLAYDLAR">
+        <span>PREZENTATSIYA REJIMI</span> 📺
       </button>
-
-    </aside>
-
-    <!-- ─── 2. MAIN CHAT AREA ────────────────────────────────────────── -->
-    <main class="chat-area" id="chat-area">
-      
-      <!-- Empty State View (No Chat Selected) -->
-      <div class="no-chat-state" id="no-chat-view">
-        <div class="no-chat-logo">
-          <i class="fa-solid fa-paper-plane"></i>
-        </div>
-        <h2 class="no-chat-title">TelePulce Web</h2>
-        <div class="no-chat-desc">
-          Muloqotni boshlash uchun chap paneldan biror suhbatni tanlang yoki yangi chat oching.
-        </div>
-      </div>
-
-      <!-- Active Chat Container -->
-      <div class="active-chat-container" id="active-chat-container">
-
-        <!-- Multi-Select Action Bar (Top) -->
-        <div class="selection-action-bar" id="selection-action-bar">
-          <div style="display:flex; align-items:center; gap:12px;">
-            <button class="header-action-btn" id="btn-cancel-selection" title="Bekor qilish">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-            <span class="selection-count" id="selection-count-text">0 ta xabar tanlandi</span>
-          </div>
-          <div class="selection-actions">
-            <button class="header-action-btn" id="btn-forward-selected" title="Yo'naltirish">
-              <i class="fa-solid fa-share"></i>
-            </button>
-            <button class="header-action-btn" id="btn-delete-selected" style="color:var(--danger);" title="O'chirish">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Chat Header -->
-        <header class="chat-header" id="chat-header">
-          <div class="chat-header-left" id="chat-header-clickable">
-            <button class="btn-back-mobile" id="btn-mobile-back" title="Orqaga">
-              <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <div class="avatar-wrap">
-              <img id="active-chat-avatar" class="chat-header-avatar" src="" alt="Avatar">
-              <div id="active-chat-online-dot" class="online-dot" style="display: none;"></div>
-            </div>
-            <div class="chat-header-info">
-              <div class="chat-header-name" id="active-chat-title">Chat Nomi</div>
-              <div class="chat-header-status" id="active-chat-status">onlayn</div>
-            </div>
-          </div>
-
-          <div class="chat-header-actions">
-            <button class="header-action-btn" id="btn-open-chat-search" title="Xabarlar ichidan qidirish">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-            <button class="header-action-btn" id="btn-toggle-info-drawer" title="Ma'lumotlar">
-              <i class="fa-solid fa-circle-info"></i>
-            </button>
-            <button class="header-action-btn" id="btn-chat-more" title="Qo'shimcha">
-              <i class="fa-solid fa-ellipsis-vertical"></i>
-            </button>
-          </div>
-        </header>
-
-        <!-- Pinned Message Banner -->
-        <div class="pinned-banner" id="pinned-banner">
-          <i class="fa-solid fa-thumbtack pinned-banner-icon"></i>
-          <div class="pinned-banner-text" id="pinned-banner-content">
-            <span class="pinned-banner-author" id="pinned-author">Pin qilingan: </span>
-            <span id="pinned-text">Xabar matni...</span>
-          </div>
-          <button class="pinned-close-btn" id="btn-unpin-banner" title="Pindan olish">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-
-        <!-- In-Chat Search Bar -->
-        <div class="chat-search-bar" id="chat-search-bar">
-          <i class="fa-solid fa-magnifying-glass" style="color:var(--text-muted); font-size:14px;"></i>
-          <input type="text" id="in-chat-search-input" class="chat-search-input" placeholder="Ushbu chatdan xabar qidirish...">
-          <span class="chat-search-results-count" id="in-chat-results-count"></span>
-          <button class="header-action-btn" id="btn-close-chat-search" style="width:30px;height:30px;">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-
-        <!-- Messages Scroll Container -->
-        <div class="messages-container" id="messages-container">
-          <!-- Dynamic message bubbles rendered here -->
-        </div>
-
-        <!-- Scroll-To-Bottom Floating Button -->
-        <button class="btn-scroll-bottom" id="btn-scroll-bottom" title="Pastga tushish">
-          <i class="fa-solid fa-chevron-down"></i>
-          <span class="scroll-badge" id="scroll-bottom-badge" style="display:none;">1</span>
-        </button>
-
-        <!-- Chat Input Area -->
-        <footer class="chat-input-area" id="chat-input-area">
-          
-          <!-- Reply / Edit Preview Bar -->
-          <div class="input-action-bar" id="input-action-bar">
-            <div class="input-action-info">
-              <span class="input-action-title" id="input-action-title">Javob berilmoqda</span>
-              <span class="input-action-snippet" id="input-action-snippet">Xabar matni...</span>
-            </div>
-            <button class="input-action-cancel" id="btn-cancel-input-action" title="Bekor qilish">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </div>
-
-          <!-- Channel Read-Only Notice -->
-          <div class="channel-readonly-bar" id="channel-readonly-bar">
-            <i class="fa-solid fa-bullhorn" style="margin-right:6px; color:var(--primary);"></i>
-            Faqat kanal ma'murlari xabar yuborishi mumkin.
-          </div>
-
-          <!-- Voice Recording Bar -->
-          <div class="recording-bar" id="recording-bar">
-            <div class="recording-time-display">
-              <span class="rec-pulse-dot"></span>
-              <span id="recording-timer">00:00</span>
-              <span style="font-size:12px; font-weight:normal; margin-left:6px; color:var(--text-secondary);">Ovoz yozilmoqda...</span>
-            </div>
-            <div style="display:flex; gap:8px;">
-              <button class="btn-secondary" id="btn-cancel-recording" style="padding:6px 12px; font-size:13px;">
-                <i class="fa-solid fa-trash"></i> Bekor qilish
-              </button>
-              <button class="btn-primary" id="btn-send-recording" style="padding:6px 14px; font-size:13px;">
-                <i class="fa-solid fa-paper-plane"></i> Yuborish
-              </button>
-            </div>
-          </div>
-
-          <!-- Standard Input Form Row -->
-          <div class="input-form-row" id="input-form-row">
-            
-            <!-- Attachment Button -->
-            <button class="input-icon-btn" id="btn-attachment" title="Fayl yoki media biriktirish">
-              <i class="fa-solid fa-paperclip"></i>
-            </button>
-
-            <!-- Attachment Popover -->
-            <div class="attachment-popover" id="attachment-popover">
-              <label class="attachment-item">
-                <i class="fa-solid fa-image" style="color:#38bdf8;"></i>
-                <span>Rasm yuborish</span>
-                <input type="file" id="file-input-image" accept="image/*" style="display:none;">
-              </label>
-              <label class="attachment-item">
-                <i class="fa-solid fa-video" style="color:#a855f7;"></i>
-                <span>Video yuborish</span>
-                <input type="file" id="file-input-video" accept="video/*" style="display:none;">
-              </label>
-              <label class="attachment-item">
-                <i class="fa-solid fa-file" style="color:#10b981;"></i>
-                <span>Hujjat / Fayl</span>
-                <input type="file" id="file-input-doc" accept="*" style="display:none;">
-              </label>
-              <div class="attachment-item" id="btn-send-round-video-item">
-                <i class="fa-solid fa-circle-play" style="color:#f59e0b;"></i>
-                <span>Dumaloq video</span>
-              </div>
-            </div>
-
-            <!-- Message Textarea Wrapper -->
-            <div class="message-input-wrapper">
-              <textarea id="message-input" class="message-textarea" placeholder="Xabar yozing..." rows="1"></textarea>
-            </div>
-
-            <!-- Emoji / Sticker Button -->
-            <button class="input-icon-btn" id="btn-emoji-toggle" title="Emoji va stikerlar">
-              <i class="fa-regular fa-face-smile"></i>
-            </button>
-
-            <!-- Voice / Send Action Button -->
-            <button class="btn-input-action" id="btn-send-or-mic" title="Yuborish">
-              <i class="fa-solid fa-microphone" id="icon-send-or-mic"></i>
-            </button>
-
-          </div>
-
-        </footer>
-
-      </div>
-
-    </main>
-
-    <!-- ─── 3. RIGHT INFO DRAWER ─────────────────────────────────────── -->
-    <aside class="info-drawer" id="info-drawer">
-      <div class="drawer-header">
-        <div class="drawer-title" id="drawer-main-title">Ma'lumotlar</div>
-        <button class="header-action-btn" id="btn-close-drawer">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-      <div class="drawer-body" id="drawer-body-content">
-        <!-- Rendered dynamically -->
-      </div>
-    </aside>
-
-  </div>
-
-  <!-- ─── 4. LEFT NAVIGATION DRAWER (HAMBURGER) ──────────────────────── -->
-  <div class="nav-drawer-overlay" id="nav-drawer-overlay">
-    <div class="nav-drawer">
-      <div class="nav-drawer-header">
-        <img id="nav-user-avatar" class="nav-drawer-avatar" src="" alt="Avatar">
-        <div>
-          <div class="nav-drawer-user-name" id="nav-user-name">Foydalanuvchi</div>
-          <div class="nav-drawer-user-sub" id="nav-user-sub">@username</div>
-        </div>
-      </div>
-
-      <div class="nav-drawer-menu">
-        <div class="nav-menu-item" id="nav-btn-profile">
-          <i class="fa-solid fa-user"></i>
-          <span>Mening profilim</span>
-        </div>
-        <div class="nav-menu-item" id="nav-btn-saved-messages">
-          <i class="fa-solid fa-bookmark"></i>
-          <span>Saqlangan xabarlar</span>
-        </div>
-        <div class="nav-menu-item" id="nav-btn-new-group">
-          <i class="fa-solid fa-users"></i>
-          <span>Yangi guruh</span>
-        </div>
-        <div class="nav-menu-item" id="nav-btn-new-channel">
-          <i class="fa-solid fa-bullhorn"></i>
-          <span>Yangi kanal</span>
-        </div>
-        <div class="nav-menu-item" id="nav-btn-switch-user">
-          <i class="fa-solid fa-users-gear"></i>
-          <span>Foydalanuvchini almashtirish</span>
-        </div>
-        <div class="nav-menu-item" id="nav-btn-settings">
-          <i class="fa-solid fa-gear"></i>
-          <span>Sozlamalar</span>
-        </div>
-        <div class="nav-menu-item" id="nav-btn-toggle-theme">
-          <i class="fa-solid fa-moon" id="nav-theme-icon"></i>
-          <span id="nav-theme-text">Tungi rejim</span>
-        </div>
-
-        <div style="border-top:1px solid var(--border); margin:8px 0;"></div>
-
-        <a href="presentation.html" class="nav-menu-item" style="color:var(--primary);">
-          <i class="fa-solid fa-display"></i>
-          <span>📺 Taqdimot Rejimi (Pitch)</span>
-        </a>
-
-        <div class="nav-menu-item" id="nav-btn-logout" style="color:var(--danger);">
-          <i class="fa-solid fa-right-from-bracket"></i>
-          <span>Chiqish</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ─── 5. EMOJI & STICKER PICKER POPOVER ─────────────────────────── -->
-  <div class="emoji-picker-popover" id="emoji-picker-popover">
-    <div class="picker-tabs">
-      <button class="picker-tab-btn active" data-picker="emojis">😀 Emojilar</button>
-      <button class="picker-tab-btn" data-picker="stickers">🎨 Stikerlar</button>
-    </div>
-    <div class="picker-content" id="picker-content">
-      <!-- Grid loaded by JS -->
-    </div>
-  </div>
-
-  <!-- ─── 6. MESSAGE CONTEXT MENU ───────────────────────────────────── -->
-  <div class="context-menu" id="message-context-menu">
-    <div class="ctx-quick-reactions" id="ctx-reactions-bar">
-      <span class="ctx-react-btn" data-reaction="👍">👍</span>
-      <span class="ctx-react-btn" data-reaction="❤️">❤️</span>
-      <span class="ctx-react-btn" data-reaction="😂">😂</span>
-      <span class="ctx-react-btn" data-reaction="🔥">🔥</span>
-      <span class="ctx-react-btn" data-reaction="😮">😮</span>
-      <span class="ctx-react-btn" data-reaction="🎉">🎉</span>
-    </div>
-    <div class="ctx-item" id="ctx-action-reply"><i class="fa-solid fa-reply"></i> Javob berish</div>
-    <div class="ctx-item" id="ctx-action-copy"><i class="fa-solid fa-copy"></i> Nusxalash</div>
-    <div class="ctx-item" id="ctx-action-pin"><i class="fa-solid fa-thumbtack"></i> Pin qilish</div>
-    <div class="ctx-item" id="ctx-action-forward"><i class="fa-solid fa-share"></i> Yo'naltirish</div>
-    <div class="ctx-item" id="ctx-action-save"><i class="fa-solid fa-bookmark"></i> Saqlanganlarga yuborish</div>
-    <div class="ctx-item" id="ctx-action-edit" style="display:none;"><i class="fa-solid fa-pen"></i> Tahrirlash</div>
-    <div class="ctx-item" id="ctx-action-select"><i class="fa-solid fa-check-double"></i> Tanlash</div>
-    <div class="ctx-item danger" id="ctx-action-delete-me"><i class="fa-solid fa-trash"></i> O'zimdan o'chirish</div>
-    <div class="ctx-item danger" id="ctx-action-delete-all" style="display:none;"><i class="fa-solid fa-trash-can"></i> Hamma uchun o'chirish</div>
-  </div>
-
-  <!-- ─── 7. MODALS ─────────────────────────────────────────────────── -->
-
-  <!-- Modal: Yangi Chat Boshlash / User Qidiruv -->
-  <div class="modal-overlay" id="modal-new-chat">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-user-plus" style="color:var(--primary);"></i> Yangi Suhbat Boshlash</div>
-        <button class="modal-close-btn" data-close-modal="modal-new-chat"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">Username yoki ism bo'yicha qidirish</label>
-          <input type="text" id="input-search-user" class="form-input" placeholder="@username yoki ism..." autocomplete="off">
-        </div>
-        <div id="new-chat-users-list" style="display:flex; flex-direction:column; gap:4px; max-height:260px; overflow-y:auto;">
-          <!-- Users dynamic list -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Yangi Guruh Yaratish -->
-  <div class="modal-overlay" id="modal-new-group">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-users" style="color:var(--primary);"></i> Yangi Guruh Yaratish</div>
-        <button class="modal-close-btn" data-close-modal="modal-new-group"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">Guruh Nomi</label>
-          <input type="text" id="input-group-name" class="form-input" placeholder="Guruh nomini yozing..." required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Tavsif (ixtiyoriy)</label>
-          <input type="text" id="input-group-desc" class="form-input" placeholder="Guruh maqsadi...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">A'zolarni tanlang</label>
-          <div id="group-member-checkbox-list" style="display:flex; flex-direction:column; gap:4px; max-height:180px; overflow-y:auto;"></div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" data-close-modal="modal-new-group">Bekor qilish</button>
-        <button class="btn-primary" id="btn-submit-create-group">Guruhni yaratish</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Yangi Kanal Yaratish -->
-  <div class="modal-overlay" id="modal-new-channel">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-bullhorn" style="color:var(--primary);"></i> Yangi Kanal Yaratish</div>
-        <button class="modal-close-btn" data-close-modal="modal-new-channel"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">Kanal Nomi</label>
-          <input type="text" id="input-channel-name" class="form-input" placeholder="Masalan: TelePulce Yangiliklari" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Kanal Tavsifi</label>
-          <textarea id="input-channel-desc" class="form-input" placeholder="Kanal haqida ma'lumot..."></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" data-close-modal="modal-new-channel">Bekor qilish</button>
-        <button class="btn-primary" id="btn-submit-create-channel">Kanalni yaratish</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Forward Message -->
-  <div class="modal-overlay" id="modal-forward">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-share" style="color:var(--primary);"></i> Xabarni yo'naltirish</div>
-        <button class="modal-close-btn" data-close-modal="modal-forward"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="modal-body">
-        <div id="forward-chat-target-list" style="display:flex; flex-direction:column; gap:4px; max-height:280px; overflow-y:auto;">
-          <!-- Target chats -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Profil Tahrirlash -->
-  <div class="modal-overlay" id="modal-edit-profile">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-user-pen" style="color:var(--primary);"></i> Profilni Tahrirlash</div>
-        <button class="modal-close-btn" data-close-modal="modal-edit-profile"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="modal-body">
-        <div style="text-align:center; margin-bottom:16px;">
-          <img id="edit-profile-avatar-preview" src="" style="width:84px; height:84px; border-radius:50%; object-fit:cover; margin-bottom:8px; border:2px solid var(--primary);" alt="">
-          <div>
-            <label for="input-profile-avatar-file" class="btn-secondary" style="font-size:12.5px; padding:6px 12px; cursor:pointer;">
-              <i class="fa-solid fa-camera"></i> Rasm yuklash
-            </label>
-            <input type="file" id="input-profile-avatar-file" accept="image/*" style="display:none;">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Ism va Familiya</label>
-          <input type="text" id="input-profile-name" class="form-input" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Username (@)</label>
-          <input type="text" id="input-profile-username" class="form-input" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Bio (O'zingiz haqingizda)</label>
-          <input type="text" id="input-profile-bio" class="form-input">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" data-close-modal="modal-edit-profile">Bekor qilish</button>
-        <button class="btn-primary" id="btn-save-profile">Saqlash</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Sozlamalar (Settings) -->
-  <div class="modal-overlay" id="modal-settings">
-    <div class="modal-card settings-modal-card">
-      <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-gear" style="color:var(--primary);"></i> TelePulce Sozlamalari</div>
-        <button class="modal-close-btn" data-close-modal="modal-settings"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="settings-layout">
-        <!-- Settings Side Tabs -->
-        <div class="settings-nav">
-          <button class="settings-nav-btn active" data-sec="general"><i class="fa-solid fa-sliders"></i> Asosiy</button>
-          <button class="settings-nav-btn" data-sec="appearance"><i class="fa-solid fa-palette"></i> Ko'rinish</button>
-          <button class="settings-nav-btn" data-sec="notifications"><i class="fa-solid fa-bell"></i> Bildirishnoma</button>
-          <button class="settings-nav-btn" data-sec="privacy"><i class="fa-solid fa-lock"></i> Maxfiylik</button>
-          <button class="settings-nav-btn" data-sec="about"><i class="fa-solid fa-circle-info"></i> Dastur haqida</button>
-        </div>
-        <!-- Settings Panels -->
-        <div class="settings-panel-container">
-          
-          <!-- Panel: General -->
-          <div class="settings-panel active" id="settings-panel-general">
-            <h4>Foydalanuvchi hisobi</h4>
-            <div style="display:flex; align-items:center; gap:14px; padding:12px 0;">
-              <img id="settings-user-avatar-small" style="width:52px;height:52px;border-radius:50%;" src="" alt="">
-              <div>
-                <div style="font-weight:700;" id="settings-user-name-label">Foydalanuvchi</div>
-                <div style="font-size:13px; color:var(--text-muted);" id="settings-user-sub-label">@username</div>
-              </div>
-            </div>
-            <button class="btn-secondary" id="btn-trigger-edit-from-settings" style="width:max-content;">
-              <i class="fa-solid fa-pen"></i> Profilni o'zgartirish
-            </button>
-
-            <div style="margin-top:16px;">
-              <label class="form-label">Dastur tili (Language)</label>
-              <select id="settings-language-select" class="form-input">
-                <option value="uz">O'zbekcha</option>
-                <option value="en">English</option>
-                <option value="ru">Русский</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Panel: Appearance -->
-          <div class="settings-panel" id="settings-panel-appearance">
-            <h4>Mavzu (Theme)</h4>
-            <div class="theme-chooser-grid">
-              <div class="theme-card active" data-theme-choice="dark">
-                <i class="fa-solid fa-moon" style="font-size:24px;"></i>
-                <span>Tungi rejim</span>
-              </div>
-              <div class="theme-card" data-theme-choice="light">
-                <i class="fa-solid fa-sun" style="font-size:24px;"></i>
-                <span>Kunduzgi rejim</span>
-              </div>
-            </div>
-
-            <h4 style="margin-top:12px;">Asosiy rang urg'usi</h4>
-            <div class="accent-color-grid">
-              <div class="accent-dot active" data-accent-color="blue" style="background-color:#2481cc;" title="TelePulce Blue"></div>
-              <div class="accent-dot" data-accent-color="green" style="background-color:#10b981;" title="Emerald Green"></div>
-              <div class="accent-dot" data-accent-color="purple" style="background-color:#8b5cf6;" title="Purple"></div>
-              <div class="accent-dot" data-accent-color="red" style="background-color:#ef4444;" title="Crimson Red"></div>
-            </div>
-
-            <div style="margin-top:16px;">
-              <label class="form-label">Shrift o'lchami</label>
-              <select id="settings-font-size-select" class="form-input">
-                <option value="14px">Kichik (14px)</option>
-                <option value="15px" selected>O'rtacha (15px - Standart)</option>
-                <option value="16px">Katta (16px)</option>
-                <option value="18px">Juda katta (18px)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Panel: Notifications -->
-          <div class="settings-panel" id="settings-panel-notifications">
-            <h4>Ovozli signallar</h4>
-            <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);">
-              <div>
-                <div style="font-weight:600;">Yangi xabar tovushi</div>
-                <div style="font-size:12.5px; color:var(--text-secondary);">Har bir yangi kiruvchi xabarda signal chalinishi</div>
-              </div>
-              <input type="checkbox" id="setting-sound-enabled" checked style="width:20px;height:20px;accent-color:var(--primary);">
-            </div>
-          </div>
-
-          <!-- Panel: Privacy -->
-          <div class="settings-panel" id="settings-panel-privacy">
-            <h4>Maxfiylik va Xavfsizlik</h4>
-            <div class="form-group">
-              <label class="form-label">Oxirgi marta ko'rilgan vaqt (Last Seen)</label>
-              <select class="form-input">
-                <option selected>Hamma uchun ochiq</option>
-                <option>Faqat kontaktlarimga</option>
-                <option>Hech kimga</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Profil rasmini kimlar ko'ra oladi</label>
-              <select class="form-input">
-                <option selected>Hamma</option>
-                <option>Faqat kontaktlar</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Panel: About -->
-          <div class="settings-panel" id="settings-panel-about">
-            <div style="text-align:center; padding:20px 0;">
-              <div class="no-chat-logo" style="width:64px;height:64px;font-size:28px;margin:0 auto 12px;">
-                <i class="fa-solid fa-paper-plane"></i>
-              </div>
-              <h3 style="font-weight:800; letter-spacing:0.5px;">TelePulce Messenger</h3>
-              <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">Versiya 3.0.0 (Ultra Fast Realtime Edition)</div>
-              <p style="font-size:13.5px; color:var(--text-secondary); margin-top:12px; line-height:1.5;">
-                TelePulce — qulay, o'ta tezkor, zamonaviy va himoyalangan muloqot vositasi.
-              </p>
-              <div style="margin-top:16px;">
-                <a href="presentation.html" class="btn-primary" style="font-size:13px; padding:8px 16px;">
-                  <i class="fa-solid fa-display"></i> Loyiha Taqdimotini ko'rish
-                </a>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Foydalanuvchini Almashtirish (Switch Account) -->
-  <div class="modal-overlay" id="modal-switch-user">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-users-gear" style="color:var(--primary);"></i> Foydalanuvchini Almashtirish</div>
-        <button class="modal-close-btn" data-close-modal="modal-switch-user"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="modal-body">
-        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:12px;">
-          Boshqa foydalanuvchi nomidan kirib, ikkita hisob o'rtasidagi real-time xabar almashinuvini bir zumda sinab ko'ring:
-        </p>
-        <div id="switch-user-accounts-list" style="display:flex; flex-direction:column; gap:8px;">
-          <!-- Rendered dynamically -->
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-primary" id="btn-open-register-modal" style="width:100%;">
-          <i class="fa-solid fa-user-plus"></i> Yangi profil ro'yxatdan o'tkazish
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Ro'yxatdan o'tish (Register) -->
-  <div class="modal-overlay" id="modal-register">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-user-plus" style="color:var(--primary);"></i> Yangi Foydalanuvchi Yaratish</div>
-        <button class="modal-close-btn" data-close-modal="modal-register"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="modal-body">
-        <form id="form-register">
-          <div class="form-group">
-            <label class="form-label">To'liq ism va familiya</label>
-            <input type="text" id="reg-fullname" class="form-input" placeholder="Masalan: Sardor Komilov" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Foydalanuvchi nomi (@username)</label>
-            <input type="text" id="reg-username" class="form-input" placeholder="sardor_k" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email yoki Telefon</label>
-            <input type="text" id="reg-email" class="form-input" placeholder="sardor@telepulse.app yoki +998901234567" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Parol</label>
-            <input type="password" id="reg-password" class="form-input" placeholder="••••••••" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bio (Qisqacha o'zingiz haqingizda)</label>
-            <input type="text" id="reg-bio" class="form-input" placeholder="Dasturchi, TelePulce foydalanuvchisi">
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" data-close-modal="modal-register">Bekor qilish</button>
-        <button class="btn-primary" id="btn-submit-register">Ro'yxatdan o'tish</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Lightbox Full Media Viewer -->
-  <div class="lightbox-modal" id="lightbox-modal">
-    <div class="lightbox-topbar">
-      <a id="lightbox-download-link" href="#" download class="lightbox-btn" title="Yuklab olish">
-        <i class="fa-solid fa-download"></i>
+      <a href="https://telepulce.netlify.app/" target="_blank" rel="noopener" class="btn-primary nav-cta" data-cursor="SINAB KO‘RISH">
+        LIVE DEMO →
       </a>
-      <button class="lightbox-btn" id="lightbox-close-btn" title="Yopish">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
     </div>
-    <img id="lightbox-img" class="lightbox-img" src="" alt="Full View">
+  </nav>
+
+  <!-- Presentation Control Bar (Visible in Presentation Mode) -->
+  <div class="presentation-bar" id="presentation-bar">
+    <div class="pres-info" id="pres-slide-counter">SLAYD 01 / 07</div>
+    <div class="pres-timer-tag" id="pres-time-guide">⏱️ 00:00–00:30 | Kirish — TelePulse bilan tanishuv</div>
+    <div class="pres-nav-btns">
+      <button class="pres-btn" id="pres-prev" title="Oldingi slayd (Up Arrow)">↑</button>
+      <button class="pres-btn" id="pres-next" title="Keyingi slayd (Down Arrow)">↓</button>
+      <button class="pres-btn" id="pres-exit" title="Chiqish (Esc)">✕</button>
+    </div>
   </div>
 
-  <!-- Toast Notification Container -->
-  <div class="toast-container" id="toast-container"></div>
+  <main>
 
-  <!-- JavaScript Messenger Engine -->
+    <!-- SECTION 1: HERO (00:00 – 00:30) -->
+    <section id="hero" class="hero-section slide-section" data-slide="1" data-time="00:00–00:30 | Kirish — TelePulse bilan tanishuv">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="badge-tag">
+            <span class="badge-pulse-dot"></span>
+            ZAMONAVIY CHAT PLATFORMASI
+          </div>
+
+          <h1 class="hero-title">
+            TELE<span class="text-accent-red">PULSE</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            Oddiy va qulay muloqot platformasi.
+          </p>
+
+          <p class="hero-description">
+            Barcha xabarlaringiz, guruhlaringiz va yaqinlaringiz bilan suhbatlar — endi bitta joyda. Tezkor, qulay va ishlatish juda oson.
+          </p>
+
+          <div class="hero-cta-group">
+            <a href="https://telepulce.netlify.app/" target="_blank" rel="noopener" class="btn-primary" data-cursor="SINAB KO‘RISH">
+              🚀 LOYIHANI SINAB KO‘RISH
+            </a>
+            <a href="#problem" class="btn-secondary" data-cursor="BATAFSIL">
+              LOYIHA HAQIDA ↓
+            </a>
+          </div>
+        </div>
+
+        <!-- 3D TelePulse Interactive Mockup -->
+        <div class="mockup-wrapper">
+          <div class="telepulse-3d-mockup" id="hero-mockup">
+            <div class="mockup-header">
+              <div class="window-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <div class="mockup-title-bar">
+                <span class="live-indicator"></span>
+                telepulse.app • Qulay chat interfeysi
+              </div>
+            </div>
+
+            <div class="mockup-body">
+              <!-- Sidebar -->
+              <div class="mockup-sidebar">
+                <div class="mockup-search-box">
+                  <span class="search-icon">🔍</span>
+                  <input type="text" class="mockup-search-input" value="Suhbatni qidirish..." readonly />
+                </div>
+                
+                <div class="chat-item active">
+                  <div class="avatar-wrapper">
+                    <div class="avatar-img avatar-tp">TP</div>
+                    <div class="online-status"></div>
+                  </div>
+                  <div class="chat-meta">
+                    <div class="chat-name">Oila va Do'stlar</div>
+                    <div class="chat-preview"><span class="preview-sender">Ali:</span> Xabarlar darhol yetib bordi! 🔥</div>
+                  </div>
+                  <div class="msg-unread-badge">1</div>
+                </div>
+
+                <div class="chat-item">
+                  <div class="avatar-wrapper">
+                    <div class="avatar-img" style="background: linear-gradient(135deg, #ff2a4b, #800020);">AZ</div>
+                    <div class="online-status"></div>
+                  </div>
+                  <div class="chat-meta">
+                    <div class="chat-name">Aziz Rahimov</div>
+                    <div class="chat-preview">Bugun ko'rishamizmi?</div>
+                  </div>
+                </div>
+
+                <div class="chat-item">
+                  <div class="avatar-wrapper">
+                    <div class="avatar-img" style="background: linear-gradient(135deg, #333, #555);">JM</div>
+                  </div>
+                  <div class="chat-meta">
+                    <div class="chat-name">Jamoa Guruhi</div>
+                    <div class="chat-preview"><span class="preview-sender">Malika:</span> Faylni yubordim</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Chat Window -->
+              <div class="mockup-main-chat">
+                <div class="chat-header-info">
+                  <div class="header-avatar-circle">TP</div>
+                  <div>
+                    <div class="header-user-title">Oila va Do'stlar</div>
+                    <div class="header-user-status"><span class="status-dot-green"></span> Tarmoqda 12 kishi bor</div>
+                  </div>
+                </div>
+
+                <div class="messages-list">
+                  <div class="msg-bubble msg-incoming">
+                    Assalomu alaykum! TelePulse ilovasiga xush kelibsiz! 👋
+                    <div class="msg-time">14:02</div>
+                  </div>
+
+                  <div class="msg-bubble msg-outgoing">
+                    Vaalaykum assalom! Juda oddiy va tushunarli ekan! 🔥
+                    <div class="msg-time">14:03 ✓✓</div>
+                  </div>
+
+                  <div class="typing-indicator-box">
+                    <span class="typing-text">Ali yozmoqda</span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                  </div>
+                </div>
+
+                <div class="chat-input-bar">
+                  <div class="chat-input-mock">Xabaringizni shu yerga yozing...</div>
+                  <button class="chat-send-btn">➤</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating Badges -->
+          <div class="mockup-floating-badge badge-top-right">
+            <span class="badge-highlight-red">⚡ BIR ZUMDA</span> Xabar yetkaziladi
+          </div>
+
+          <div class="mockup-floating-badge badge-bottom-left">
+            <span class="badge-highlight-white">✨ ODDY</span> Ishlatish juda oson
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: MUAMMO (00:30 – 01:10) -->
+    <section id="problem" class="problem-section slide-section" data-slide="2" data-time="00:30–01:10 | Muammo — Bugungi muloqot qiyinchiliklari">
+      <div class="container">
+        <div class="section-header-box">
+          <div class="badge-tag tag-red">
+            <span class="badge-pulse-dot red-dot"></span>
+            MUAMMO
+          </div>
+          <h2 class="section-title">
+            Bugungi kunda muloqot qilish<br><span class="text-accent-red">nega noqulay?</span>
+          </h2>
+          <p class="section-subtitle">
+            Bugungi kunda odamlar muloqot qilish uchun turli xil vositalardan foydalanadi va xabarlar tarqalib ketadi.
+          </p>
+        </div>
+
+        <div class="problem-grid">
+          <div class="problem-card-giant gsap-reveal">
+            <div class="problem-number-box">
+              <span class="problem-num">01</span>
+            </div>
+            <div class="problem-info">
+              <h3 class="problem-title">XABARLAR TARQALIB KETGAN</h3>
+              <p class="problem-desc">Odamlar bir vaqtning o'zida 4-5 xil ilovadan foydalanishga majbur. Har bir suhbat har xil joyda tarqoq bo'lib qoladi.</p>
+            </div>
+          </div>
+
+          <div class="problem-card-giant gsap-reveal">
+            <div class="problem-number-box">
+              <span class="problem-num">02</span>
+            </div>
+            <div class="problem-info">
+              <h3 class="problem-title">FAYLLARNI TOPISH KIYIN</h3>
+              <p class="problem-desc">Muhim rasm, video yoki hujjatlarni izlab topish juda ko'p vaqt va ortiqcha energiya yo'qotilishiga olib keladi.</p>
+            </div>
+          </div>
+
+          <div class="problem-card-giant gsap-reveal">
+            <div class="problem-number-box">
+              <span class="problem-num">03</span>
+            </div>
+            <div class="problem-info">
+              <h3 class="problem-title">ILOVAlAR SEKIN VA MURAKKAB</h3>
+              <p class="problem-desc">Ko'pgina chat ilovalari sekin ishlaydi va ortiqcha murakkab tugmalari sababli foydalanish noqulaylik tug'diradi.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: YECHIM (01:10 – 02:00) -->
+    <section id="solution" class="solution-section slide-section" data-slide="3" data-time="01:10–02:00 | Yechim — Qulay muloqot platformasi">
+      <div class="container">
+        <div class="section-header-box">
+          <div class="badge-tag">YECHIM HASIL BO'LDI</div>
+          <h2 class="section-title">TelePulse bilan barchasi oddiy.</h2>
+          <p class="section-subtitle">
+            Men bu jarayonni bitta qulay platformaga jamlash uchun TelePulse yaratdim.
+          </p>
+        </div>
+
+        <div class="solution-showcase-container" id="solution-container">
+          <!-- Floating Feature Nodes -->
+          <div class="node-tag node-top-left">⚡ DARHOL XABAR</div>
+          <div class="node-tag node-top-right">✨ ODDIY VA TUSHUNARLI</div>
+          <div class="node-tag node-bottom-left">🚀 TEZKOR ISHLASH</div>
+          <div class="node-tag node-bottom-right">🌐 BIR JOYDA</div>
+
+          <!-- Connecting Lines SVG overlay -->
+          <svg id="connection-svg" viewBox="0 0 1000 600" preserveAspectRatio="none">
+            <line x1="150" y1="100" x2="500" y2="300" class="svg-glow-line" />
+            <line x1="850" y1="100" x2="500" y2="300" class="svg-glow-line" />
+            <line x1="150" y1="500" x2="500" y2="300" class="svg-glow-line" />
+            <line x1="850" y1="500" x2="500" y2="300" class="svg-glow-line" />
+          </svg>
+
+          <!-- Core App Visual -->
+          <div class="telepulse-3d-mockup solution-core-mockup" id="solution-mockup">
+            <div class="mockup-header">
+              <div class="window-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <div class="mockup-title-bar">TelePulse Muloqot Markazi</div>
+            </div>
+            <div class="solution-core-body">
+              <div class="core-logo-badge">TP</div>
+              <h3 class="core-title">
+                TELE<span class="text-accent-red">PULSE</span>
+              </h3>
+              <p class="core-desc">
+                Barcha muloqot ehtiyojlaringiz bitta qulay joyda birlashtirildi.
+              </p>
+              <div class="core-status-pill">
+                <span class="status-pulse-green"></span> TAYYOR VA ISHLAMOQDA
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: ASOSIY IMKONIYATLAR (02:00 – 03:20) -->
+    <section id="features" class="features-section slide-section" data-slide="4" data-time="02:00–03:20 | Imkoniyatlar — Nimalar qilish mumkin?">
+      <div class="container">
+        <div class="section-header-box">
+          <div class="badge-tag">AMALIY IMKONIYATLAR</div>
+          <h2 class="section-title">Saytda nimalar qilish mumkin?</h2>
+          <p class="section-subtitle">Har bir funksiya foydalanuvchiga maksimal qulaylik yaratish uchun mo'ljallangan.</p>
+        </div>
+
+        <div class="features-interactive-grid">
+          <!-- Feature Selection Menu -->
+          <div class="features-nav-list">
+            <button class="feature-nav-btn active" data-feature="1" data-cursor="KO‘RISH">
+              <span class="feature-num">01</span>
+              <span class="feature-title-text">TEZKOR XABARLAR</span>
+            </button>
+            
+            <button class="feature-nav-btn" data-feature="2" data-cursor="KO‘RISH">
+              <span class="feature-num">02</span>
+              <span class="feature-title-text">GURUHLAR</span>
+            </button>
+
+            <button class="feature-nav-btn" data-feature="3" data-cursor="KO‘RISH">
+              <span class="feature-num">03</span>
+              <span class="feature-title-text">SMART QIDIRUV</span>
+            </button>
+
+            <button class="feature-nav-btn" data-feature="4" data-cursor="KO‘RISH">
+              <span class="feature-num">04</span>
+              <span class="feature-title-text">MEDIA YUBORISH</span>
+            </button>
+
+            <button class="feature-nav-btn" data-feature="5" data-cursor="KO‘RISH">
+              <span class="feature-num">05</span>
+              <span class="feature-title-text">XABARLARNI BOSHQARISH</span>
+            </button>
+
+            <button class="feature-nav-btn" data-feature="6" data-cursor="KO‘RISH">
+              <span class="feature-num">06</span>
+              <span class="feature-title-text">SHAXSIY PROFIL</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Feature Screen Display -->
+          <div class="feature-preview-display">
+            <div class="dynamic-feature-mockup" id="feature-screen-box">
+              
+              <!-- Screen 1: Tezkor Xabarlar -->
+              <div class="feature-screen-content active" id="screen-1">
+                <div class="screen-badge">01 / TEZKOR XABARLAR</div>
+                <h3 class="screen-title">Foydalanuvchilar bir-biriga darhol xabar yubora oladi.</h3>
+                <p class="screen-desc">Hech qanday kutishlarsiz, xabaringiz bir soniya ichida qarshingizdagi inson ekranida paydo bo'ladi.</p>
+                <div class="feature-chat-demo">
+                  <div class="demo-bubble msg-incoming">Salom! Xabarlar qanchalik tez bormoqda? ⚡</div>
+                  <div class="demo-bubble msg-outgoing">Bir soniyada yetib keldi! Juda qulay! 🔥</div>
+                </div>
+              </div>
+
+              <!-- Screen 2: Guruhlar -->
+              <div class="feature-screen-content" id="screen-2">
+                <div class="screen-badge">02 / GURUHLAR</div>
+                <h3 class="screen-title">Guruh yaratish va bir nechta odam bilan suhbatlashish mumkin.</h3>
+                <p class="screen-desc">Oila a'zolaringiz, do'stlaringiz yoki hamkasblaringiz bilan bitta umumiy guruhda suhbatlashing.</p>
+                <div class="groups-grid-demo">
+                  <div class="group-card-demo">
+                    <div class="group-name">👨‍👩‍👧‍👦 Oila Guruhi</div>
+                    <div class="group-members">6 ta a'zo bor</div>
+                  </div>
+                  <div class="group-card-demo">
+                    <div class="group-name">⚽ Do'stlar Davrasi</div>
+                    <div class="group-members">14 ta a'zo bor</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Screen 3: Smart Qidiruv -->
+              <div class="feature-screen-content" id="screen-3">
+                <div class="screen-badge">03 / SMART QIDIRUV</div>
+                <h3 class="screen-title">Kerakli odam yoki xabarni tez topish mumkin.</h3>
+                <p class="screen-desc">Qidiruv satriga kerakli ism yoki so'zni yozasiz va tizim uni darhol ko'rsatib beradi.</p>
+                <div class="search-demo-bar">
+                  <span>🔍</span>
+                  <span class="search-term">"Jasur aka"</span>
+                </div>
+                <div class="search-result-info">✓ Topildi: Jasur aka (Online)</div>
+              </div>
+
+              <!-- Screen 4: Media Yuborish -->
+              <div class="feature-screen-content" id="screen-4">
+                <div class="screen-badge">04 / MEDIA YUBORISH</div>
+                <h3 class="screen-title">Rasm, video va hujjat yuborish mumkin.</h3>
+                <p class="screen-desc">Eng chiroyli rasmlaringiz, muhim video va fayllaringizni birgina tugma orqali ulashing.</p>
+                <div class="media-box-demo">
+                  <div class="media-pill media-img">📷 Ta'til_Rasmlari.jpg</div>
+                  <div class="media-pill media-doc">📄 Hujjat_Nusxasi.pdf</div>
+                </div>
+              </div>
+
+              <!-- Screen 5: Xabarlarni Boshqarish -->
+              <div class="feature-screen-content" id="screen-5">
+                <div class="screen-badge">05 / XABARLARNI BOSHQARISH</div>
+                <h3 class="screen-title">Xabarlarni tahrirlash va o'chirish imkoniyati.</h3>
+                <p class="screen-desc">Xato yozib qo'ydingizmi? Hech qisi yo'q, xabarni o'zgartirishingiz yoki o'chirib tashlashingiz mumkin.</p>
+                <div class="edit-demo-box">
+                  <span class="edit-label">✏️ To'g'rilangan xabar</span>
+                  <div class="edit-text">Bugun soat 18:00 da uchrashamiz! <span class="edited-tag">(tahrirlandi)</span></div>
+                </div>
+              </div>
+
+              <!-- Screen 6: Shaxsiy Profil -->
+              <div class="feature-screen-content" id="screen-6">
+                <div class="screen-badge">06 / SHAXSIY PROFIL</div>
+                <h3 class="screen-title">Profil ma’lumotlarini boshqarish mumkin.</h3>
+                <p class="screen-desc">O'z rasmingizni qo'ying, ismingizni o'zgartiring va statusingizni belgilang.</p>
+                <div class="profile-demo-box">
+                  <div class="profile-avatar">TP</div>
+                  <div>
+                    <div class="profile-name">Foydalanuvchi Profili</div>
+                    <div class="profile-status">Tarmoqda • "TelePulse ishlatmoqdaman"</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: AFZALLIKLARI (DESKTOP & MOBILE DUAL SHOWCASE) -->
+    <section class="multi-device-section slide-section" data-slide="5" data-time="03:20–04:00 | Afzalliklari — Nega aynan TelePulse?">
+      <div class="container">
+        <div class="section-header-box">
+          <div class="badge-tag">AFZALLIKLARI</div>
+          <h2 class="section-title">Tezkor, qulay va<br><span class="text-accent-red">foydalanish oson.</span></h2>
+          <p class="section-subtitle">Telefoningizda ham, kompyuteringizda ham bir xil qulaylikda ishlaydi.</p>
+        </div>
+
+        <div class="device-orbit-container">
+          <!-- Desktop Glass Mockup -->
+          <div class="desktop-frame">
+            <div class="mockup-header">
+              <div class="window-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <div class="desktop-title">Kompyuter brauzerida</div>
+            </div>
+            <div class="desktop-body">
+              <h3 class="device-heading">KOMPYUTERDA QULAY</h3>
+              <p class="device-sub">Katta ekranda barcha suhbatlarni bir joyda ko'rib turasiz.</p>
+            </div>
+          </div>
+
+          <!-- Mobile Phone Glass Mockup -->
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-body">
+              <div class="phone-logo">TELE<span class="text-accent-red">PULSE</span></div>
+              <div class="phone-sub">Telefonda tezkor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: QANDAY ISHLAYDI? (TIMELINE) -->
+    <section id="timeline" class="timeline-section slide-section" data-slide="6" data-time="04:00–04:30 | Qanday ishlaydi? — 3 ta oddiy qadam">
+      <div class="container">
+        <div class="section-header-box">
+          <div class="badge-tag">3 TA ODDIY BOSQICH</div>
+          <h2 class="section-title">Qanday ishlaydi?</h2>
+          <p class="section-subtitle">Foydalanuvchi kiradi, suhbatni tanlaydi va xabar yuboradi.</p>
+        </div>
+
+        <div class="timeline-steps-grid">
+          <div class="timeline-line-bg"></div>
+          <div class="timeline-line-progress" id="timeline-progress"></div>
+
+          <div class="timeline-step-card active" data-step="1">
+            <div class="step-circle-badge">01</div>
+            <h3 class="step-title">KIRASIZ</h3>
+            <p class="step-desc">Platformani ochasiz va bir zumda o'z sahifangizga kirasiz.</p>
+          </div>
+
+          <div class="timeline-step-card" data-step="2">
+            <div class="step-circle-badge">02</div>
+            <h3 class="step-title">SUHBATNI TANLAYSIZ</h3>
+            <p class="step-desc">Yaqiningizni, do'stingizni yoki guruhni tanlaysiz.</p>
+          </div>
+
+          <div class="timeline-step-card" data-step="3">
+            <div class="step-circle-badge">03</div>
+            <h3 class="step-title">XABAR YUBORASIZ</h3>
+            <p class="step-desc">Matn, rasm yoki faylingizni bir soniyada yuborasiz!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: LIVE DEMO & YAKUN (04:30 – 05:00) -->
+    <section id="live-demo" class="live-demo-section slide-section" data-slide="7" data-time="04:30–05:00 | Live Demo & Yakun">
+      <div class="container">
+        <div class="badge-tag tag-red">AMALDA KO‘RAMIZ</div>
+        <h2 class="section-title giant-title">
+          Endi esa loyihaning<br><span class="text-accent-red">o‘zini ko‘rsataman.</span>
+        </h2>
+        <p class="section-subtitle">
+          TelePulse platformasini brauzeringizda jonli ravishda sinab ko'ring.
+        </p>
+
+        <a href="https://telepulce.netlify.app/" target="_blank" rel="noopener" class="btn-primary giant-cta-btn" data-cursor="OCHISH">
+          🚀 LOYIHANI OCHISH (LIVE DEMO)
+        </a>
+      </div>
+    </section>
+
+    <!-- OUTRO SECTION -->
+    <section class="outro-section">
+      <div class="container">
+        <h2 class="outro-title">
+          TELEPULSE — ODAMLARNING BIR-BIRI BILAN<br><span class="text-accent-red">QULAYROQ MULOQOT QILISHI UCHUN YARATILGAN.</span>
+        </h2>
+        
+        <div class="outro-brand">
+          TELE<span class="text-accent-red">PULSE</span>
+        </div>
+        
+        <p class="outro-sub">
+          E’tiboringiz uchun rahmat! 🔥
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER SECTION (WITH OTHER PROJECTS) -->
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <div class="footer-brand-box">
+        <div class="footer-logo">TELE<span class="text-accent-red">PULSE</span></div>
+        <p class="footer-tagline">Zamonaviy muloqot platformasi.</p>
+      </div>
+
+      <div class="footer-projects-box">
+        <h4 class="footer-heading">MENING LOYIHALARIM</h4>
+        <ul class="footer-links-list">
+          <li>
+            <a href="https://telepulce.netlify.app/" target="_blank" rel="noopener" class="footer-link active-link">
+              <span class="link-num">01</span> TelePulse
+            </a>
+          </li>
+          <li>
+            <a href="https://shirinfood2.netlify.app/" target="_blank" rel="noopener" class="footer-link">
+              <span class="link-num">02</span> ShirinFood
+            </a>
+          </li>
+          <li>
+            <a href="https://al-nasry.netlify.app/" target="_blank" rel="noopener" class="footer-link">
+              <span class="link-num">03</span> Al-Nasry
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-copyright-box">
+        <p>© 2026 TelePulse. Barcha huquqlar himoyalangan.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript App Logic -->
   <script src="main.js"></script>
 </body>
 </html>
